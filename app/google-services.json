@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "206894197095",
+    "firebase_url": "https://citizenfood-ad850.firebaseio.com",
+    "project_id": "citizenfood-ad850",
+    "storage_bucket": "citizenfood-ad850.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206894197095:android:83819e393b4e7440",
+        "android_client_info": {
+          "package_name": "fr.citizenfood.citizenfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206894197095-gmdb3balba23968l5silribe4cd4ff4b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.citizenfood.citizenfood",
+            "certificate_hash": "a01d8b0fc9ee93ca591fc3f23a08e5fb86ffcb7a"
+          }
+        },
+        {
+          "client_id": "206894197095-tp32h37v1nhfo14mul3d8argtsgieqsl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxntKyYb5U0lnOcXPeIYQjgqCQ14GSZ_Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206894197095-tp32h37v1nhfo14mul3d8argtsgieqsl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
