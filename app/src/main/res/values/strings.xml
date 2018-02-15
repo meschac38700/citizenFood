@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">CitizenFood</string>
     <string name="action_settings">Settings</string>
+    <string name="login">Identifiant</string>
+    <string name="password">Mot de passe</string>
+    <string name="connection_title">Page de connexion</string>
+    <string name="create_account_string">Je m\'inscris</string>
+    <string name="connect">Connexion</string>
 </resources>

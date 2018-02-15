@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CitizenFood.iml" filepath="$PROJECT_DIR$/CitizenFood.iml" />
+      <module fileurl="file://C:\Users\William\Desktop\projets_en_cours\Projet_Android\citizenFood\CitizenFood.iml" filepath="C:\Users\William\Desktop\projets_en_cours\Projet_Android\citizenFood\CitizenFood.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\William\Desktop\projets_en_cours\Projet_Android\citizenFood\app\app.iml" filepath="C:\Users\William\Desktop\projets_en_cours\Projet_Android\citizenFood\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/citizenFood.iml" filepath="$PROJECT_DIR$/citizenFood.iml" />
     </modules>
   </component>
 </project>
