@@ -41,7 +41,7 @@
                 android:textSize="14dp"
                 android:ems="10"
                 android:hint="@string/login"
-                android:inputType="textPersonName" />
+                android:inputType="textEmailAddress" />
 
         </android.support.design.widget.TextInputLayout>
 
