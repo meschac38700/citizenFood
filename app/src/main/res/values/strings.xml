@@ -11,4 +11,6 @@
     <string name="create_account_string">Je m\'inscris</string>
     <string name="register_btn">S\'inscrire</string>
     <string name="connect">Connexion</string>
+    <string name="menu_logout">Deconnexion</string>
+    menu_logout
 </resources>
