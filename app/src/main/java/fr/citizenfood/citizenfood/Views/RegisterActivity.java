@@ -1,8 +1,7 @@
-package fr.citizenfood.citizenfood;
+package fr.citizenfood.citizenfood.Views;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,48 +14,44 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+import fr.citizenfood.citizenfood.Model.User;
+import fr.citizenfood.citizenfood.R;
+
+public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "RegisterActivity";
 
 
     private EditText usernameField;
     private EditText passwordField;
-    private Button signInButton;
+    private Button registerButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         //init firebase components
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         //init views
-        usernameField = findViewById(R.id.loginUsername);
-        passwordField = findViewById(R.id.loginPassword);
-        signInButton = findViewById(R.id.loginButton);
+        usernameField = findViewById(R.id.registerUsername);
+        passwordField = findViewById(R.id.registerPassword);
+        registerButton = findViewById(R.id.registerButton);
 
-        signInButton.setOnClickListener(this);
+        //onClickEffect
+        effetAuClic(registerButton);
 
+
+        registerButton.setOnClickListener(this);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Check auth on Activity start
-        if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
-        }
-    }
 
     private void signUp() {
         Log.d(TAG, "signUp");
@@ -77,10 +72,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
-                            Toast.makeText(LoginActivity.this, "Sign Up suceed",
+                            Toast.makeText(RegisterActivity.this, "Sign Up suceed",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(LoginActivity.this, "Sign Up Failed",
+                            Toast.makeText(RegisterActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -93,7 +88,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         writeNewUser(user.getUid(), username, user.getEmail());
 
         // Go to MainActivity
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
         finish();
     }
 
@@ -137,4 +132,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         signUp();
     }
+
+
 }

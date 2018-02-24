@@ -1,4 +1,4 @@
-package fr.citizenfood.citizenfood;
+package fr.citizenfood.citizenfood.Views;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import fr.citizenfood.citizenfood.R;
 
 public class MainActivity extends AppCompatActivity {
 

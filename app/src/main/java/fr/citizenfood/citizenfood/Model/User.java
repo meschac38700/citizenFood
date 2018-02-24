@@ -1,4 +1,4 @@
-package fr.citizenfood.citizenfood;
+package fr.citizenfood.citizenfood.Model;
 
 /**
  * Created by William on 23/02/2018.

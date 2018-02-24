@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.citizenfood.citizenfood.MainActivity">
+    android:background="@color/main_color"
+    tools:context="fr.citizenfood.citizenfood.Views.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
