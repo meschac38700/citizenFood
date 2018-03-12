@@ -68,14 +68,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void signIn() {
         Log.d(TAG, "signIn");
+        //check the fields and pass over if not empty
         if (!validateForm()) {
             return;
         }
 
         showProgressDialog();
+        //get values from fields (email and password)
         String email = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
+        //sign in in the database
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -84,10 +87,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         hideProgressDialog();
 
                         if (task.isSuccessful()) {
+                            //case auth successfull
                             onAuthSuccess(task.getResult().getUser());
                             Toast.makeText(LoginActivity.this, "Sign In Successfuly done",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            //case auth unsuccessfull
                             Toast.makeText(LoginActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -95,34 +100,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 });
     }
 
-    private void signUp() {
-        Log.d(TAG, "signUp");
-        if (!validateForm()) {
-            return;
-        }
 
-        showProgressDialog();
-        String email = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                            Toast.makeText(LoginActivity.this, "Sign Up suceed",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
     private void onAuthSuccess(FirebaseUser user) {
         String username = usernameFromEmail(user.getEmail());
 
@@ -135,6 +113,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private String usernameFromEmail(String email) {
+        //get the username in the email's string
         if (email.contains("@")) {
             return email.split("@")[0];
         } else {
@@ -151,6 +130,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     // [END basic_write]
 
     private boolean validateForm() {
+        //check if the fields are empty and display red alert if empty
         boolean result = true;
         if (TextUtils.isEmpty(usernameField.getText().toString())) {
             usernameField.setError("Required");

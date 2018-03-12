@@ -24,10 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.quickstart.database.PostDetailActivity;
-import com.google.firebase.quickstart.database.R;
-import com.google.firebase.quickstart.database.models.Post;
-import com.google.firebase.quickstart.database.viewholder.PostViewHolder;
+
+import fr.citizenfood.citizenfood.R;
+
 
 public abstract class PostListFragment extends Fragment {
 
