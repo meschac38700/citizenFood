@@ -15,11 +15,12 @@
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.LoginActivity">
+        <activity android:name=".Activities.LoginActivity" android:windowSoftInputMode="stateHidden">
         </activity>
-        <activity android:name=".Activities.RegisterActivity" />
+        <activity android:name=".Activities.RegisterActivity" android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".Activities.PostDetailActivity" />
-        <activity android:name=".Activities.NewPostActivity" />
+        <activity android:name=".Activities.NewPostActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".Activities.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
