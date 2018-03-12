@@ -26,6 +26,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
+    //citizenfood38 mdp Toto1234
     private static final String TAG = "LoginActivity";
 
 
