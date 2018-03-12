@@ -1,4 +1,4 @@
-package fr.citizenfood.citizenfood.Views;
+package fr.citizenfood.citizenfood.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -21,86 +21,66 @@ import com.google.firebase.database.FirebaseDatabase;
 import fr.citizenfood.citizenfood.Model.User;
 import fr.citizenfood.citizenfood.R;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
-    //citizenfood38 mdp Toto1234
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "RegisterActivity";
 
 
     private EditText usernameField;
     private EditText passwordField;
-    private Button signInButton, registerLinkBtn;
+    private Button registerButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         //init firebase components
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         //init views
-        usernameField = findViewById(R.id.loginUsername);
-        passwordField = findViewById(R.id.loginPassword);
-        signInButton = findViewById(R.id.loginButton);
-        registerLinkBtn = findViewById(R.id.registerLinkButton);
+        usernameField = findViewById(R.id.registerUsername);
+        passwordField = findViewById(R.id.registerPassword);
+        registerButton = findViewById(R.id.registerButton);
 
         //onClickEffect
-        effetAuClic(signInButton);
-        effetAuClic(registerLinkBtn);
+        effetAuClic(registerButton);
 
-        signInButton.setOnClickListener(this);
-        registerLinkBtn.setOnClickListener(this);
 
+        registerButton.setOnClickListener(this);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // Check auth on Activity start
-        if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
-        }
-    }
-
-    private void signIn() {
-        Log.d(TAG, "signIn");
-        //check the fields and pass over if not empty
+    private void signUp() {
+        Log.d(TAG, "signUp");
         if (!validateForm()) {
             return;
         }
 
         showProgressDialog();
-        //get values from fields (email and password)
         String email = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
-        //sign in in the database
-        mAuth.signInWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
                         hideProgressDialog();
 
                         if (task.isSuccessful()) {
-                            //case auth successfull
                             onAuthSuccess(task.getResult().getUser());
-                            Toast.makeText(LoginActivity.this, "Sign In Successfuly done",
+                            Toast.makeText(RegisterActivity.this, "Sign Up suceed",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            //case auth unsuccessfull
-                            Toast.makeText(LoginActivity.this, "Sign In Failed",
+                            Toast.makeText(RegisterActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
-
-
     private void onAuthSuccess(FirebaseUser user) {
         String username = usernameFromEmail(user.getEmail());
 
@@ -108,12 +88,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         writeNewUser(user.getUid(), username, user.getEmail());
 
         // Go to MainActivity
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
         finish();
     }
 
     private String usernameFromEmail(String email) {
-        //get the username in the email's string
         if (email.contains("@")) {
             return email.split("@")[0];
         } else {
@@ -130,7 +109,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     // [END basic_write]
 
     private boolean validateForm() {
-        //check if the fields are empty and display red alert if empty
         boolean result = true;
         if (TextUtils.isEmpty(usernameField.getText().toString())) {
             usernameField.setError("Required");
@@ -152,15 +130,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
-        int i = v.getId();
-        if (i == R.id.loginButton) {
-            signIn();
-        } else if (i == R.id.registerLinkButton) {
-            Intent communicationIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-            // 04/12 passPosition(communicationIntent);
-            //effetAuClic(v);
-
-            startActivity(communicationIntent);
-        }
+        signUp();
     }
+
+
 }

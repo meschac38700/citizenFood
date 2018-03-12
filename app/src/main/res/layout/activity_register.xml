@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/register_color"
-    tools:context="fr.citizenfood.citizenfood.Views.RegisterActivity">
+    tools:context="fr.citizenfood.citizenfood.Activities.RegisterActivity">
 
 
     <LinearLayout

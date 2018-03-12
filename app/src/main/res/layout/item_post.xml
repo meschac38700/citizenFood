@@ -33,8 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="5dp"
-                android:background="@android:color/holo_green_light"
-                android:src="@android:drawable/ic_menu_add" />
+                android:src="@drawable/like_unvalid" />
 
             <TextView
                 android:id="@+id/post_num_stars"

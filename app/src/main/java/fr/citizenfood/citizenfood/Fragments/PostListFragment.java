@@ -25,6 +25,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import fr.citizenfood.citizenfood.Activities.PostDetailActivity;
 import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
 import fr.citizenfood.citizenfood.ViewHolder.PostViewHolder;
@@ -103,9 +104,9 @@ public abstract class PostListFragment extends Fragment {
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.stars.containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
+                    viewHolder.starView.setImageResource(R.drawable.like_valid);
                 } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                    viewHolder.starView.setImageResource(R.drawable.like_unvalid);
                 }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button

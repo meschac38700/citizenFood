@@ -1,4 +1,4 @@
-package fr.citizenfood.citizenfood.Views;
+package fr.citizenfood.citizenfood.Activities;
 
 import android.app.ProgressDialog;
 import android.graphics.PorterDuff;

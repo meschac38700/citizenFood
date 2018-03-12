@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_color"
-        tools:context="fr.citizenfood.citizenfood.Views.LoginActivity">
+        tools:context="fr.citizenfood.citizenfood.Activities.LoginActivity">
 
 
     <LinearLayout
