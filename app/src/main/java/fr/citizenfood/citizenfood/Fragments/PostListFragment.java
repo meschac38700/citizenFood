@@ -1,4 +1,4 @@
-package fr.citizenfood.citizenfood.Model.Fragments;
+package fr.citizenfood.citizenfood.Fragments;
 
 /**
  * Created by William on 11/03/2018.
@@ -25,7 +25,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
+import fr.citizenfood.citizenfood.ViewHolder.PostViewHolder;
 
 
 public abstract class PostListFragment extends Fragment {
