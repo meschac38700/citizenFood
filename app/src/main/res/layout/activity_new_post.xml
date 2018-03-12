@@ -4,41 +4,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_color"
     tools:context="fr.citizenfood.citizenfood.Activities.NewPostActivity">
-    <EditText
-        android:id="@+id/field_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="Nom du restaurant"
-        android:maxLines="1" />
 
-    <EditText
-        android:id="@+id/field_body"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:padding="15dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/field_title"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="5dp"
-        android:hint="Description"
-        android:inputType="textMultiLine"
-        android:maxLines="10"
-        android:scrollHorizontally="false" />
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/shadow"
+        android:id="@+id/linearLayout"
+        android:elevation="20dp"
+        >
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nouveau restaurant"
+            android:fontFamily="@font/citizenfont"
+            android:textSize="30dp"
+            android:gravity="center"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="80dp">
+
+            <EditText
+                android:id="@+id/field_title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:textSize="14dp"
+                android:ems="10"
+                android:hint="Nom du restaurant"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="40dp">
+
+            <EditText
+                android:id="@+id/field_body"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="Description"
+                android:textSize="14dp"
+                android:layout_marginTop="45dp"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:scrollHorizontally="false"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+
+        <Button
+            android:id="@+id/postRestoButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="45dp"
+            android:textSize="15dp"
+            android:textColor="@color/button_text"
+            android:background="@color/colorPrimaryDark"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Ajouter" />
+
+
+
+
+    </LinearLayout>
+
 
     <ImageView
-        android:id="@+id/imageView"
+
         android:layout_width="110dp"
         android:layout_height="110dp"
-        android:layout_above="@+id/fab_submit_post"
+        android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:src="@drawable/logo_resto" />
+        android:layout_marginTop="15dp"
+        android:src="@drawable/logo_resto"
+        android:id="@+id/imageView" />
 
     <TextView
         android:id="@+id/logoText"
@@ -52,14 +110,5 @@
         android:text="@string/app_name"
         android:textSize="20dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_submit_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ok"
-        />
 
 </RelativeLayout>

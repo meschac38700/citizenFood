@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ public class NewPostActivity extends BaseActivity {
 
     private EditText mTitleField;
     private EditText mBodyField;
-    private FloatingActionButton mSubmitButton;
+    private Button mSubmitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,9 @@ public class NewPostActivity extends BaseActivity {
 
         mTitleField = findViewById(R.id.field_title);
         mBodyField = findViewById(R.id.field_body);
-        mSubmitButton = findViewById(R.id.fab_submit_post);
+        mSubmitButton = findViewById(R.id.postRestoButton);
+        //onClickEffect
+        effetAuClic(mSubmitButton);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
