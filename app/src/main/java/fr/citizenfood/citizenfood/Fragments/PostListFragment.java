@@ -4,7 +4,11 @@ package fr.citizenfood.citizenfood.Fragments;
  * Created by William on 11/03/2018.
  */
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +33,7 @@ import fr.citizenfood.citizenfood.Activities.PostDetailActivity;
 import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
 import fr.citizenfood.citizenfood.ViewHolder.PostViewHolder;
+import fr.citizenfood.citizenfood.database.InternalStockage;
 
 
 public abstract class PostListFragment extends Fragment {
@@ -39,6 +44,8 @@ public abstract class PostListFragment extends Fragment {
     private DatabaseReference mDatabase;
     // [END define_database_reference]
 
+    private boolean user_already_vote = false;
+    private String comment_id = null;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
@@ -129,37 +136,75 @@ public abstract class PostListFragment extends Fragment {
 
     // [START post_stars_transaction]
     private void onStarClicked(DatabaseReference postRef) {
-        postRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Post p = mutableData.getValue(Post.class);
-                if (p == null) {
+        if (!user_already_vote)
+        {
+            Log.d(TAG, "onStarClicked() called with: postRef = [" + postRef + "]");
+            this.user_already_vote = true;
+            postRef.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+                    Post p = mutableData.getValue(Post.class);
+                    if (p == null)
+                    {
+                        return Transaction.success(mutableData);
+                    }
+
+                    if (p.stars.containsKey(getUid()))
+                    {
+                        user_already_vote = false;
+                        // Unstar the post and remove self from stars
+                        p.starCount = p.starCount - 1;
+                        p.stars.remove(getUid());
+                    }
+                    else
+                    {
+                        user_already_vote = true;
+                        // Star the post and add self to stars
+                        p.starCount = p.starCount + 1;
+                        p.stars.put(getUid(), true);
+                    }
+
+                    // Set value and report transaction success
+                    mutableData.setValue(p);
                     return Transaction.success(mutableData);
                 }
 
-                if (p.stars.containsKey(getUid())) {
-                    // Unstar the post and remove self from stars
-                    p.starCount = p.starCount - 1;
-                    p.stars.remove(getUid());
-                } else {
-                    // Star the post and add self to stars
-                    p.starCount = p.starCount + 1;
-                    p.stars.put(getUid(), true);
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b,
+                                       DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "onComplete() called with: databaseError = [" + databaseError + "], b = [" + b + "], dataSnapshot = [" + dataSnapshot + "]");
+                    // Transaction completed
+                    Log.d(TAG, "postTransaction:onComplete:" + databaseError);
                 }
+            });
 
-                // Set value and report transaction success
-                mutableData.setValue(p);
-                return Transaction.success(mutableData);
-            }
+        }
 
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                // Transaction completed
-                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-            }
-        });
+
     }
+
+    private SQLiteDatabase database;
+    private InternalStockage dbHelper;
+    private String[] allColumns = { InternalStockage.COLUMN_ID,
+            InternalStockage.COLUMN_VOTE };
+
+
+    public void open() throws SQLException {
+        database = dbHelper.getWritableDatabase();
+    }
+
+    public void close() {
+        dbHelper.close();
+    }
+
+
+
+
+
+
+
+
+
     // [END post_stars_transaction]
 
 

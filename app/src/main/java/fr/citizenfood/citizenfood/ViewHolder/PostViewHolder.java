@@ -1,6 +1,7 @@
 package fr.citizenfood.citizenfood.ViewHolder;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView starView;
     public TextView numStarsView;
     public TextView bodyView;
-
+    private final static String TAG =  "PostViewHolder";
     public PostViewHolder(View itemView) {
         super(itemView);
 
@@ -32,6 +33,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindToPost(Post post, View.OnClickListener starClickListener) {
+        Log.d(TAG, "bindToPost() called with: post = [" + post + "], starClickListener = [" + starClickListener + "]");
         titleView.setText(post.title);
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.starCount));
