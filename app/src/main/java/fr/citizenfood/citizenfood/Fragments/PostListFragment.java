@@ -4,9 +4,7 @@ package fr.citizenfood.citizenfood.Fragments;
  * Created by William on 11/03/2018.
  */
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -29,6 +28,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import fr.citizenfood.citizenfood.Activities.MainActivity;
 import fr.citizenfood.citizenfood.Activities.PostDetailActivity;
 import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
@@ -43,12 +46,13 @@ public abstract class PostListFragment extends Fragment {
     // [START define_database_reference]
     private DatabaseReference mDatabase;
     // [END define_database_reference]
-
-    private boolean user_already_vote = false;
+    //private MainActivity ma;
+    private boolean vote_closed = false;
     private String comment_id = null;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
+    private String winnerTitle = "";
 
     public PostListFragment() {}
 
@@ -71,7 +75,7 @@ public abstract class PostListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        //this.ma = new MainActivity();
         // Set up Layout Manager, reverse layout
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
@@ -84,6 +88,7 @@ public abstract class PostListFragment extends Fragment {
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Post>()
                 .setQuery(postsQuery, Post.class)
                 .build();
+
 
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(options) {
 
@@ -116,6 +121,7 @@ public abstract class PostListFragment extends Fragment {
                     viewHolder.starView.setImageResource(R.drawable.like_unvalid);
                 }
 
+
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToPost(model, new View.OnClickListener() {
                     @Override
@@ -124,6 +130,7 @@ public abstract class PostListFragment extends Fragment {
                         DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
 
+
                         // Run two transactions
                         onStarClicked(globalPostRef);
                         onStarClicked(userPostRef);
@@ -131,15 +138,42 @@ public abstract class PostListFragment extends Fragment {
                 });
             }
         };
+
         mRecycler.setAdapter(mAdapter);
+
+
+        //getWinner
+        //winnerTitle = mRecycler.getAdapter().get;
+
+
+
+
+    }
+
+    int getWinnerPos(){
+        int winnerPos = 0;
+        Post winnerItem = mAdapter.getItem(0);
+        //post list size
+        int postListSize = mAdapter.getItemCount();
+        if(postListSize !=0){
+            for(int i=0; i<postListSize;i++){
+                if(mAdapter.getItem(i).starCount > winnerItem.starCount){
+                    winnerItem = mAdapter.getItem(i);
+                    winnerPos = i;
+                }
+
+            }
+        }
+        return winnerPos;
+
     }
 
     // [START post_stars_transaction]
     private void onStarClicked(DatabaseReference postRef) {
-        if (!user_already_vote)
+        if (!vote_closed)
         {
             Log.d(TAG, "onStarClicked() called with: postRef = [" + postRef + "]");
-            this.user_already_vote = true;
+            this.vote_closed = true;
             postRef.runTransaction(new Transaction.Handler() {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
@@ -151,14 +185,14 @@ public abstract class PostListFragment extends Fragment {
 
                     if (p.stars.containsKey(getUid()))
                     {
-                        user_already_vote = false;
+                        vote_closed = false;
                         // Unstar the post and remove self from stars
                         p.starCount = p.starCount - 1;
                         p.stars.remove(getUid());
                     }
                     else
                     {
-                        user_already_vote = true;
+                        vote_closed = true;
                         // Star the post and add self to stars
                         p.starCount = p.starCount + 1;
                         p.stars.put(getUid(), true);

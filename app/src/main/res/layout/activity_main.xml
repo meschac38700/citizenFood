@@ -13,32 +13,25 @@
         android:layout_height="wrap_content"
         />
 
-    <LinearLayout
-        android:id="@+id/manageLayout"
-        android:layout_width="match_parent"
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:id="@+id/cleanDatabaseBtn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_below="@+id/tabs"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Desactiver les votes"
-            android:textSize="20dp"/>
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/disableVote"
-            />
-    </LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/button_text"
+        android:background="@color/deleteColor"
+        android:onClick="cleanDatabase"
+        android:text="Supprimer les restaurants" />
 
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/manageLayout" />
+        android:layout_below="@+id/cleanDatabaseBtn" />
     <!--<android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
