@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -29,23 +30,30 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import fr.citizenfood.citizenfood.Activities.LoginActivity;
+import fr.citizenfood.citizenfood.Activities.MainActivity;
 import fr.citizenfood.citizenfood.Activities.PostDetailActivity;
 import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
 import fr.citizenfood.citizenfood.ViewHolder.PostViewHolder;
 import fr.citizenfood.citizenfood.database.InternalStockage;
+import fr.citizenfood.citizenfood.database.Votes;
 
 
 public abstract class PostListFragment extends Fragment {
 
     private static final String TAG = "PostListFragment";
 
+    private SQLiteDatabase database;
+    private InternalStockage dbHelper;
+    private String[] allColumns = { InternalStockage.COLUMN_ID,
+            InternalStockage.COLUMN_VOTESTATE, InternalStockage.COLUMN_AUTHOR, InternalStockage.COLUMN_UID };
+
+    private String like_uid = null;
     // [START define_database_reference]
     private DatabaseReference mDatabase;
     // [END define_database_reference]
 
-    private boolean user_already_vote = false;
-    private String comment_id = null;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
@@ -64,13 +72,20 @@ public abstract class PostListFragment extends Fragment {
 
         mRecycler = rootView.findViewById(R.id.messages_list);
         mRecycler.setHasFixedSize(true);
-
+        dbHelper = new InternalStockage(getContext());
         return rootView;
     }
+
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        dbHelper = new InternalStockage(getContext());
+        database = dbHelper.getWritableDatabase();
+
+
 
         // Set up Layout Manager, reverse layout
         mManager = new LinearLayoutManager(getActivity());
@@ -110,7 +125,7 @@ public abstract class PostListFragment extends Fragment {
                 });
 
                 // Determine if the current user has liked this post and set UI accordingly
-                if (model.stars.containsKey(getUid())) {
+                if (model.stars.containsKey(getUid()) && !LoginActivity.session.getVoteState()) {
                     viewHolder.starView.setImageResource(R.drawable.like_valid);
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.like_unvalid);
@@ -123,6 +138,7 @@ public abstract class PostListFragment extends Fragment {
                         // Need to write to both places the post is stored
                         DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
+                        like_uid = model.uid;
 
                         // Run two transactions
                         onStarClicked(globalPostRef);
@@ -134,60 +150,83 @@ public abstract class PostListFragment extends Fragment {
         mRecycler.setAdapter(mAdapter);
     }
 
-    // [START post_stars_transaction]
-    private void onStarClicked(DatabaseReference postRef) {
-        if (!user_already_vote)
+    private void vote(DatabaseReference postRef)
+    {
+
+        postRef.runTransaction(new Transaction.Handler()
         {
-            Log.d(TAG, "onStarClicked() called with: postRef = [" + postRef + "]");
-            this.user_already_vote = true;
-            postRef.runTransaction(new Transaction.Handler() {
-                @Override
-                public Transaction.Result doTransaction(MutableData mutableData) {
-                    Post p = mutableData.getValue(Post.class);
+
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData)
+            {
+                Post p = mutableData.getValue(Post.class);
+                if(!p.author.equalsIgnoreCase(LoginActivity.session.getUserLogin()) )
+                {
+
                     if (p == null)
                     {
                         return Transaction.success(mutableData);
                     }
+                    Votes v = dbHelper.getVotes(LoginActivity.session.getUserLogin());
+                    if (p.stars.containsKey(getUid()) && v != null )
+                    { // l'utilisateur enleve son vote si, il a deja voté et que le post contient un vote
+                            Log.d(TAG, "doTransaction() ***************** IF *********************** ");
+                            // Unstar the post and remove self from stars
+                            p.starCount = p.starCount - 1;
+                            p.stars.remove(getUid());
+                            LoginActivity.session.setVoteState(false);
+                            LoginActivity.session.setUidItem("");
+                            boolean del = dbHelper.deleteVotes(getUid());
+                            Log.d(TAG, "doTransaction() ******** VOTE DELETE TO THE LOCAL DATABASE ********* => [" + del + "]");
 
-                    if (p.stars.containsKey(getUid()))
-                    {
-                        user_already_vote = false;
-                        // Unstar the post and remove self from stars
-                        p.starCount = p.starCount - 1;
-                        p.stars.remove(getUid());
                     }
-                    else
-                    {
-                        user_already_vote = true;
+                    else if( !p.stars.containsKey(getUid()) && v != null ) // Si le post ne cotient pas de vote de cet utilisateur et qu'il a deja voté
+                    { 
+                        // ON FAIT RIEN
+                        //Log.d(TAG, "doTransaction() ***************** USER ALREADY VOTE ANOTHER TO POST *********************** ");
+
+                    }
+                    else {// Si l'utilisateur n'a pas encore voté
+
+                        Log.d(TAG, "doTransaction() ***************** ELSE *********************** ");
                         // Star the post and add self to stars
                         p.starCount = p.starCount + 1;
                         p.stars.put(getUid(), true);
-                    }
+                        Votes v1 = new Votes();
+                        v1.setVoteState("1");
+                        v1.setUid_vote(getUid());
+                        v1.setVoteAuthor(LoginActivity.session.getUserLogin());
+                        long id = dbHelper.insertVotes(v1);
+                        Log.d(TAG, "doTransaction()  ********** VOTE's ID ADDED ********** => [" + id + "]");
 
+                    }
                     // Set value and report transaction success
                     mutableData.setValue(p);
-                    return Transaction.success(mutableData);
+
                 }
+                return Transaction.success(mutableData);
 
-                @Override
-                public void onComplete(DatabaseError databaseError, boolean b,
-                                       DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onComplete() called with: databaseError = [" + databaseError + "], b = [" + b + "], dataSnapshot = [" + dataSnapshot + "]");
-                    // Transaction completed
-                    Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-                }
-            });
+            }
 
-        }
-
-
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+            }
+        });
     }
 
-    private SQLiteDatabase database;
-    private InternalStockage dbHelper;
-    private String[] allColumns = { InternalStockage.COLUMN_ID,
-            InternalStockage.COLUMN_VOTE };
+    // [START post_stars_transaction]
+    private void onStarClicked(DatabaseReference postRef)
+    {
+        //Toast.makeText(this.getContext(), "Bienvenue à citizenFood "+ LoginActivity.session.getUserLogin(),    Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onStarClicked() called with: Etat vote = [" + LoginActivity.session.getVoteState() + "]");
 
+        Log.d(TAG, "onStarClicked() called with: uidCurrentItem = [" + like_uid + "]");
+        Log.d(TAG, "onStarClicked() called with: session uid = [" + LoginActivity.session.getUidItem() + "]");
+        vote(postRef);
+
+    }
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
