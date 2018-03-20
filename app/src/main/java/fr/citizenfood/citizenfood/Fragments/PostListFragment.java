@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -31,7 +30,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
 import fr.citizenfood.citizenfood.Activities.LoginActivity;
-import fr.citizenfood.citizenfood.Activities.MainActivity;
 import fr.citizenfood.citizenfood.Activities.PostDetailActivity;
 import fr.citizenfood.citizenfood.Model.Post;
 import fr.citizenfood.citizenfood.R;
@@ -44,20 +42,17 @@ public abstract class PostListFragment extends Fragment {
 
     private static final String TAG = "PostListFragment";
 
-    private SQLiteDatabase database;
-    private InternalStockage dbHelper;
-    private String[] allColumns = { InternalStockage.COLUMN_ID,
-            InternalStockage.COLUMN_VOTESTATE, InternalStockage.COLUMN_AUTHOR, InternalStockage.COLUMN_UID };
-
-    private String like_uid = null;
     // [START define_database_reference]
     private DatabaseReference mDatabase;
     // [END define_database_reference]
 
+    private boolean user_already_vote = false;
+    private String comment_id = null;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
-
+    private SQLiteDatabase database;
+    private InternalStockage dbHelper;
     public PostListFragment() {}
 
     @Override
@@ -72,21 +67,15 @@ public abstract class PostListFragment extends Fragment {
 
         mRecycler = rootView.findViewById(R.id.messages_list);
         mRecycler.setHasFixedSize(true);
-        dbHelper = new InternalStockage(getContext());
+
         return rootView;
     }
-
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         dbHelper = new InternalStockage(getContext());
         database = dbHelper.getWritableDatabase();
-
-
-
         // Set up Layout Manager, reverse layout
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
@@ -125,7 +114,7 @@ public abstract class PostListFragment extends Fragment {
                 });
 
                 // Determine if the current user has liked this post and set UI accordingly
-                if (model.stars.containsKey(getUid()) && !LoginActivity.session.getVoteState()) {
+                if (model.stars.containsKey(getUid())) {
                     viewHolder.starView.setImageResource(R.drawable.like_valid);
                 } else {
                     viewHolder.starView.setImageResource(R.drawable.like_unvalid);
@@ -138,7 +127,6 @@ public abstract class PostListFragment extends Fragment {
                         // Need to write to both places the post is stored
                         DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
-                        like_uid = model.uid;
 
                         // Run two transactions
                         onStarClicked(globalPostRef);
@@ -149,7 +137,6 @@ public abstract class PostListFragment extends Fragment {
         };
         mRecycler.setAdapter(mAdapter);
     }
-
     private void vote(DatabaseReference postRef)
     {
 
@@ -217,31 +204,11 @@ public abstract class PostListFragment extends Fragment {
     }
 
     // [START post_stars_transaction]
-    private void onStarClicked(DatabaseReference postRef)
-    {
-        //Toast.makeText(this.getContext(), "Bienvenue à citizenFood "+ LoginActivity.session.getUserLogin(),    Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "onStarClicked() called with: Etat vote = [" + LoginActivity.session.getVoteState() + "]");
-
-        Log.d(TAG, "onStarClicked() called with: uidCurrentItem = [" + like_uid + "]");
-        Log.d(TAG, "onStarClicked() called with: session uid = [" + LoginActivity.session.getUidItem() + "]");
+    private void onStarClicked(DatabaseReference postRef) {
         vote(postRef);
 
+
     }
-
-    public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        dbHelper.close();
-    }
-
-
-
-
-
-
-
 
 
     // [END post_stars_transaction]
