@@ -1,9 +1,14 @@
 package fr.citizenfood.citizenfood.Model;
 
+import android.util.Log;
+
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by William on 12/03/2018.
@@ -23,7 +28,9 @@ public class Post {
     }
 
     public Post(String uid, String author, String title, String body) {
-        this.uid = uid;
+        String uid1 = UUID.randomUUID().toString();
+        Log.d(TAG, "Post() CREATED NEW POST: UID UNIQUE = [" + uid1 + "] ");
+        this.uid = uid1;
         this.author = author;
         this.title = title;
         this.body = body;
