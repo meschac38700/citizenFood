@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 return mFragmentNames[position];
             }
         };
+        Toast.makeText(this, "Bienvenue à citizenFood "+LoginActivity.session.getUserLogin(),    Toast.LENGTH_SHORT).show();
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
@@ -68,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));
             }
         });
+    /*    LoginActivity.session.setUidItem("");
+
+        Toast.makeText(this, "UID DELETE", Toast.LENGTH_SHORT).show();
+    */
     }
 
     @Override

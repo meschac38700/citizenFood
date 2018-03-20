@@ -20,12 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import fr.citizenfood.citizenfood.Model.User;
 import fr.citizenfood.citizenfood.R;
+import fr.citizenfood.citizenfood.database.Session;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-
+    public static Session session;//global variable
     //citizenfood38 mdp Toto1234
     private static final String TAG = "LoginActivity";
 
@@ -47,6 +48,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         signInButton = findViewById(R.id.loginButton);
         registerLinkBtn = findViewById(R.id.registerLinkButton);
 
+        session = new Session(LoginActivity.this); //in oncreate
+        session.setVoteState(false);
+        //session.setUidItem("");
         //onClickEffect
         effetAuClic(signInButton);
         effetAuClic(registerLinkBtn);
@@ -106,6 +110,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         // Write new user
         writeNewUser(user.getUid(), username, user.getEmail());
+
+        //  save session userLogin
+        //Toast.makeText(this, mAuth.getCurrentUser().getEmail().toString(), Toast.LENGTH_SHORT).show();
+        String[] tmp_arr = mAuth.getCurrentUser().getEmail().split("@");
+        String login = tmp_arr[0];
+        session.setUserLogin(login);
 
         // Go to MainActivity
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
