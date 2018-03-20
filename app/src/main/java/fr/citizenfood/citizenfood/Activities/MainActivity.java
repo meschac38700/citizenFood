@@ -11,30 +11,53 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
+import java.util.Calendar;
+import java.util.Date;
 
 import fr.citizenfood.citizenfood.Fragments.MyRestoPostsFragment;
 import fr.citizenfood.citizenfood.Fragments.RestoPostsFragment;
 import fr.citizenfood.citizenfood.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
 
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
+    private Button manageVoteBtn;
+    private DatabaseReference mDatabase;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        manageVoteBtn = (Button) findViewById(R.id.cleanDatabaseBtn);
 
+        //onClickEffect
+        effetAuClic(manageVoteBtn);
+
+        //clean data
+        /*mDatabase.child("posts").setValue(null);
+        Date currentTime = Calendar.getInstance().getTime();
+        int currentHour = currentTime.getHours();
+        if(currentHour == 12 && currentHour == 19){
+            mDatabase.child("posts").setValue(null);
+            Toast.makeText(MainActivity.this, "votes clos !", Toast.LENGTH_LONG).show();
+        }*/
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+
             private final Fragment[] mFragments = new Fragment[] {
                     new RestoPostsFragment(),
                     new MyRestoPostsFragment()
@@ -58,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         };
         Toast.makeText(this, "Bienvenue à citizenFood "+LoginActivity.session.getUserLogin(),    Toast.LENGTH_SHORT).show();
         // Set up the ViewPager with the sections adapter.
+        for(int i=0;i<mPagerAdapter.getCount();i++){
+            mPagerAdapter.getItem(i);
+        }
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -83,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public void cleanDatabase(View v){
+        mDatabase.child("posts").setValue(null);
+        mDatabase.child("user-posts").setValue(null);
+        Toast.makeText(MainActivity.this, "votes clos !", Toast.LENGTH_LONG).show();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
