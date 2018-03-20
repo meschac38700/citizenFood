@@ -99,6 +99,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             //case auth unsuccessfull
                             Toast.makeText(LoginActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Please see your email or password", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
